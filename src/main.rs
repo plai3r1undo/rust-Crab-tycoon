@@ -324,8 +324,8 @@ impl Huts{
                     }
                     if can_draw{
                         WOOD_HUT_COORDINATES.push(Vec2::new(x, y));
-                        WOOD -= 50;
-                        ROCKS -= 30;
+                        WOOD -= 30;
+                        ROCKS -= 50;
                     }
                 }
             }
