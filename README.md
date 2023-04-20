@@ -8,3 +8,10 @@ This is a game that I' am making to learn rust, unfortunally the code sucks
 -  Rock: I dont remeber
 - wood hut: Hansjörg Malthaner https://opengameart.org/users/varkalandar
 - everything else is made by me
+
+
+
+
+## TODO
+
+[] selection menu for building

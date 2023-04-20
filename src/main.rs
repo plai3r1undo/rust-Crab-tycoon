@@ -1,8 +1,8 @@
 use macroquad::prelude::*;
 use macroquad::audio::*;
-use macroquad::prelude::coroutines::wait_seconds;
 use std::thread;
 use std::time::Duration;
+use macroquad::color::*;
 
 
 const PLAYER_SIZE: Vec2 = Vec2::from_array([120f32, 120f32]);
@@ -11,7 +11,6 @@ const RUN_SPEED: f32 = 490.0;
 static mut STAMINA: f32 = 300.0;  
 const INTERACTION_DISTANCE: f32 = 220.0;
 //TODO fix overflows with reseources
-
 
 
 
@@ -65,7 +64,6 @@ impl InventoryBar {
         let num_slots = 10;
         let inventory_width = num_slots as f32 * (slot_width + slot_padding);
         let inventory_x = (screen_width() - inventory_width) / 2.0;
-    //TODO fix shitty initalization        
         Self {
             slot_width: slot_width,
             slot_height:slot_height,
@@ -119,7 +117,6 @@ impl InventoryBar {
     
 }
 
-    
 
 impl Tree {
     pub async fn new() -> Self {
@@ -306,11 +303,11 @@ impl Huts{
         }
     }
 
-    pub fn draw_wood_hut(&self) {
+    pub fn draw_wood_hut(&self, drawable: bool) {
         let mut can_draw = true;
         let x = mouse_position().0;
         let y = mouse_position().1;
-        if is_mouse_button_pressed(MouseButton::Left){
+        if drawable{//delete
             if unsafe { WOOD >= 30 && ROCKS >= 50} {
                 let target = Vec2::new(x,y);
                 unsafe{
@@ -325,11 +322,11 @@ impl Huts{
                     if can_draw{
                         WOOD_HUT_COORDINATES.push(Vec2::new(x, y));
                         WOOD -= 30;
-                        ROCKS -= 50;
+                        ROCKS -= 30;
                     }
                 }
             }
-        }
+        }//delete
         unsafe{
             if !WOOD_HUT_COORDINATES.is_empty(){
                 for position in &WOOD_HUT_COORDINATES{
@@ -338,11 +335,11 @@ impl Huts{
             }
         }
     }
-    pub fn draw_stone_mine(&self){
+    pub fn draw_stone_mine(&self, drawable: bool){
         let mut can_draw = true;
         let x = mouse_position().0;
         let y = mouse_position().1;
-        if is_key_pressed(KeyCode::F){
+        if drawable{
             if unsafe { WOOD >= 400 && ROCKS >= 150}{
                 let target = Vec2::new(x, y);
                 unsafe{
@@ -372,11 +369,11 @@ impl Huts{
     }
 
 
-    pub fn draw_charcoal_hut(&self) {
+    pub fn draw_charcoal_hut(&self, drawable: bool) {
         let mut can_draw = true;
         let x = mouse_position().0;
         let y = mouse_position().1;
-        if is_mouse_button_pressed(MouseButton::Right){
+        if drawable{
             if unsafe{ WOOD >= 30 && ROCKS >= 50} {
                 let target = Vec2::new(x, y);
                 unsafe{
@@ -423,11 +420,59 @@ impl Huts{
             }
         }
     }
+    pub fn draw_selected_hut(&self, mut selected_index: u16) -> u16{
+        let build_preview_square_size: f32 = 200.0;
+        let x: f32 = screen_width() / 2.0 - build_preview_square_size as f32 / 2.0;
+        let y: f32 = screen_height() - 300.0;
+        let color: Color = Color::new(0.0, 0.0, 0.0, 0.6); 
+        draw_rectangle(x, y, build_preview_square_size, build_preview_square_size, color);
+        //n tot of huts is 4
+        //1 wood
+        //2 charcoal
+        //3 stone mine
+        //TODO find a way to not use infinite if statements
+        let params = DrawTextureParams { dest_size: Some(Vec2::new(150.0, 150.0)),
+        ..Default::default()
+        };
+        self.draw_wood_hut(false);  //false -> does not draw new hut but draws previes
+        self.draw_stone_mine(false);
+        self.draw_charcoal_hut(false);
+        if is_key_pressed(KeyCode::Key1){
+            selected_index = 1;
+            
+        }
+        if is_key_pressed(KeyCode::Key2){
+            selected_index = 2;
+        }
+        if is_key_pressed(KeyCode::Key3){
+            selected_index = 3;
+        }
+        if selected_index == 1 {
+            draw_texture_ex(self.wood_hut_texture, x, y, color, params.clone());
+            if is_mouse_button_pressed(MouseButton::Left){
+                self.draw_wood_hut(true);
+            }  
+        }
+        if selected_index == 2 {
+            draw_texture_ex(self.charcoal_hut_texture, x, y, color, params.clone());
+            if is_mouse_button_pressed(MouseButton::Left){
+                self.draw_charcoal_hut(true);
+            }
+        }
+        if selected_index == 3 {
+            draw_texture_ex(self.rock_mine_texture, x, y, color, params.clone());
+            if is_mouse_button_pressed(MouseButton::Left){
+                self.draw_stone_mine(true);
+            }
+        }
+        selected_index
+    }
 }
 
 #[macroquad::main(window_conf)]
 async fn main() {
     let mut player = Player::new().await;
+    let mut selected_index = 1; 
     let interactable_tree = Tree::new().await;
     let rock = Rock::new().await;
     let inventory_bar = InventoryBar::new().await;
@@ -439,10 +484,10 @@ async fn main() {
     let tree_texture: Texture2D = interactable_tree.texture;
     let rock_texture: Texture2D = rock.tetxure;
     play_sound(main_ost, macroquad::audio::PlaySoundParams {looped: true, volume: 0.0});
-    
     let huts_cloned = Huts::new().await;
 
-    
+    // meanging that lef mouse has been pressed and now we can draw a new hut
+
     let handle = thread::spawn(move || {
         loop {
             huts_cloned.produce_materials();
@@ -451,9 +496,6 @@ async fn main() {
     }); 
 
     loop {
-    
-
-        //handle quality of life input
 
         if is_key_pressed(KeyCode::Escape) {
             break;
@@ -461,7 +503,9 @@ async fn main() {
         
         clear_background(LIGHTGRAY);
         
-
+        
+        selected_index = huts.draw_selected_hut(selected_index);
+        println!("Selected index is {}", selected_index);
 
         if is_key_pressed(KeyCode::K) {
             volume += 0.1;
@@ -481,9 +525,6 @@ async fn main() {
             }
         }
         set_sound_volume(main_ost, volume);
-        huts.draw_wood_hut();
-        huts.draw_charcoal_hut();
-        huts.draw_stone_mine();
         for position in rock_positions.clone() {   //performance hit maybe
             draw_texture(rock_texture, position.x, position.y, WHITE);
             if rock.is_player_nearby(position, player.rect.point()) && is_key_pressed(KeyCode::Space) {
