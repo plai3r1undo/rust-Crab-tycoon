@@ -15,4 +15,4 @@ This is a game that I' am making to learn rust, unfortunally the code sucks
 ## TODO
 
 - [x] selection menu for building
-- [] fix randomness for buildins
+- [ ] fix randomness for buildins
