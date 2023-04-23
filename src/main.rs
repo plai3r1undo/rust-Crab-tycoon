@@ -488,7 +488,7 @@ async fn main() {
 
     // meanging that lef mouse has been pressed and now we can draw a new hut
 
-    let handle = thread::spawn(move || {
+     thread::spawn(move || {
         loop {
             huts_cloned.produce_materials();
             thread::sleep(Duration::from_millis(500));
