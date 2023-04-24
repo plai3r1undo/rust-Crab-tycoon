@@ -1,8 +1,13 @@
+extern crate rand;
+
+
 use macroquad::prelude::*;
 use macroquad::audio::*;
 use std::thread;
 use std::time::Duration;
-use macroquad::color::*;
+use rand::Rng;
+
+
 
 
 const PLAYER_SIZE: Vec2 = Vec2::from_array([120f32, 120f32]);
@@ -122,7 +127,6 @@ impl Tree {
     pub async fn new() -> Self {
         Self {
             position: Vec2::from_array([120f32,120f32]),
-            //texture: load_texture("textures/albero.png").await.unwrap(),
             texture: match load_texture("textures/albero.png").await {
                 Ok(texure) => texure,
                 Err(error) => {eprintln!("Albero.png texture not found {}", error); Texture2D::empty()}
@@ -142,13 +146,15 @@ impl Tree {
     pub fn fill(&self) -> Vec<Vec2> {
         let mut tree_positions = Vec::new();
         for _ in 0..N_TREES {
-            let x = rand::gen_range(40.0, screen_width() - 30.0);
-            let y = rand::gen_range(30.0, screen_height()- 30.0);
+            let mut rng0 = rand::thread_rng();
+            let mut rng1 = rand::thread_rng();
+            let x: u32 = rng0.gen_range(30u32..screen_width() as u32);  
+            let y = rng1.gen_range(30..screen_height() as u32 - 30);
             println!("random coordinates x {}, y {}",x, y);
-            tree_positions.push(Vec2::new(x, y))
+            tree_positions.push(Vec2::new(x as f32, y as f32))
         }
         return tree_positions;
-        }
+    }
 }   
 
 impl Rock {
@@ -166,9 +172,11 @@ impl Rock {
     pub fn fill(&self) -> Vec<Vec2> {
         let mut tree_positions = Vec::new();
         for _ in 0..N_ROCKS {
-            let x = rand::gen_range(40.0, screen_width() - 30.0);
-            let y = rand::gen_range(30.0, screen_height()- 30.0);
-            tree_positions.push(Vec2::new(x, y))
+            let mut rng0 = rand::thread_rng();
+            let mut rng1 = rand::thread_rng();
+            let x: u32 = rng0.gen_range(30u32..screen_width() as u32);  
+            let y = rng1.gen_range(30..screen_height() as u32 - 30);
+            tree_positions.push(Vec2::new(x as f32, y as f32))
         }
         return tree_positions;
     }
