@@ -32,7 +32,7 @@ static mut STONE_MINE_COORDINATES:Vec<Vec2> = Vec::new();
 
 
 //name
-static font_size: f32 = 30.0;
+static FONT_SIZE: f32 = 30.0;
 
 struct Rock {
     tetxure: Texture2D
@@ -89,26 +89,26 @@ impl InventoryBar {
             draw_rectangle(x, y, self.slot_width, self.slot_height, BLACK);
             if i == 0 && unsafe {WOOD} > 0 {
                 draw_texture(self.wood_texture, x +5.0 , y + 5.0, WHITE);
-                draw_text(&format!("{}", unsafe {WOOD}), x, 130.0, font_size, BLACK);
+                draw_text(&format!("{}", unsafe {WOOD}), x, 130.0, FONT_SIZE, BLACK);
                 if unsafe { WOOD} < 0{
-                    draw_text("Deficit", x, y, font_size, RED);
+                    draw_text("Deficit", x, y, FONT_SIZE, RED);
                 }
             }
             if i == 1 && unsafe { ROCKS } > 0 {
                 draw_texture(self.rock_texture, x +5.0 , y + 5.0, WHITE);
-                draw_text(&format!("{}", unsafe {ROCKS}), x, 130.0, font_size, BLACK);
+                draw_text(&format!("{}", unsafe {ROCKS}), x, 130.0, FONT_SIZE, BLACK);
                 if unsafe {ROCKS} < 0{
-                    draw_text("Deficit", x, 130.0, font_size, RED);
+                    draw_text("Deficit", x, 130.0, FONT_SIZE, RED);
                 }
             }
             if i == 2 && unsafe {CHARCOAL} > 0{
                 draw_texture(self.charcoal_texture, x + 5.0, y + 5.0, WHITE);
                 if unsafe {CHARCOAL < 10000} && !toomuch_ch{
-                    draw_text(&format!("{}", unsafe {CHARCOAL}), x, 130.0, font_size, BLACK);
+                    draw_text(&format!("{}", unsafe {CHARCOAL}), x, 130.0, FONT_SIZE, BLACK);
                     toomuch_ch = false;
                 }
                 if unsafe {CHARCOAL} < 0{
-                    draw_text("Deficit", x, 130.0, font_size, RED);
+                    draw_text("Deficit", x, 130.0, FONT_SIZE, RED);
                 }
                 else if unsafe{CHARCOAL} > 1000{
                     toomuch_ch = true;
