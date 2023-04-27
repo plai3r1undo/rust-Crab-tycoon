@@ -440,7 +440,7 @@ impl Huts{
         let params = DrawTextureParams { dest_size: Some(Vec2::new(150.0, 150.0)),
         ..Default::default()
         };
-        self.draw_wood_hut(false);  //false -> does not draw new hut but draws previes
+        self.draw_wood_hut(false);  //false -> does not draw new hut but draws previews
         self.draw_stone_mine(false);
         self.draw_charcoal_hut(false);
         if is_key_pressed(KeyCode::Key1){
