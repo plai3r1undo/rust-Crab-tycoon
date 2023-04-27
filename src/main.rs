@@ -39,7 +39,6 @@ struct Rock {
 }
 
 struct Tree {
-    position: Vec2,
     texture: Texture2D,
 }
 
@@ -126,7 +125,6 @@ impl InventoryBar {
 impl Tree {
     pub async fn new() -> Self {
         Self {
-            position: Vec2::from_array([120f32,120f32]),
             texture: match load_texture("textures/albero.png").await {
                 Ok(texure) => texure,
                 Err(error) => {eprintln!("Albero.png texture not found {}", error); Texture2D::empty()}
@@ -513,7 +511,6 @@ async fn main() {
         
         
         selected_index = huts.draw_selected_hut(selected_index);
-        println!("Selected index is {}", selected_index);
 
         if is_key_pressed(KeyCode::K) {
             volume += 0.1;
@@ -532,7 +529,9 @@ async fn main() {
                 volume = 0.0
             }
         }
+        
         set_sound_volume(main_ost, volume);
+        
         for position in rock_positions.clone() {   //performance hit maybe
             draw_texture(rock_texture, position.x, position.y, WHITE);
             if rock.is_player_nearby(position, player.rect.point()) && is_key_pressed(KeyCode::Space) {
@@ -549,16 +548,13 @@ async fn main() {
 
         player.draw();
         player.update_position(get_frame_time());
-        //huts.produce_materials();
         draw_text(&format!("Stamina: {}", unsafe { STAMINA }), 20.0, 20.0, 30.0, BLACK);
-        draw_text(&format!("Wood : {}", unsafe {WOOD}), 20.0, 50.0, 30.0, BLACK);
         draw_text(&format!("Volume : {},  Volume + : k, - : L", volume), 20.0, 80.0, 30.0, BLACK);
         draw_text(&format!("FPS: {}", get_fps()), 20.0, 120.0, 30.0, RED);
-        draw_text("buildings only produce if you have enough to mantain upkeep", 20.0, 160.0, 40.0, GREEN);
+        draw_text("buildings only produce if you have enough to mantain upkeep", 20.0, 160.0, 40.0, RED);
         inventory_bar.draw_inventory();
         next_frame().await
     }
-    //handle.join().unwrap();
 }
 
 
