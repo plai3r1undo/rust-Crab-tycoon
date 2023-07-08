@@ -1,5 +1,5 @@
 # rust-Crab-tycoon
-This is a game that I' am making to learn rust, unfortunally the code sucks
+This is a game that I am making to learn rust, therefore the code sucks
 
 
 
