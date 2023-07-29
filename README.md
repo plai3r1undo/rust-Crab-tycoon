@@ -1,5 +1,5 @@
 # rust-Crab-tycoon
-This is a game that I am making to learn rust, therefore the code sucks
+This is a game that I made to learn rust, therefore the code sucks
 
 
 
@@ -24,4 +24,4 @@ To Build just run :
 ```sh
 cargo build
 ```
-Don't forget to add flags like `--release`, you may want to add more flags of your choice.
+Don't forget to add flags like `--release`
